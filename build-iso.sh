@@ -15,10 +15,12 @@ sudo docker run \
     --rm \
     --privileged \
     -v /var/lib/containers/storage:/var/lib/containers/storage \
+    -v "$(pwd)/config.toml:/config.toml:ro" \
     -v "${OUTPUT_DIR}":/output \
     quay.io/centos-bootc/bootc-image-builder:latest \
-    --type iso \
+    --type anaconda-iso \
     --rootfs btrfs \
+    --config /config.toml \
     "${IMAGE_NAME}"
 
 echo "==> ISO Generation finished successfully in ${OUTPUT_DIR}"

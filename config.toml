@@ -1,0 +1,6 @@
+# PenguinOS Installer Configuration
+# An empty kickstart contents override disables automated unattended installation,
+# allowing the user to interactively choose partitions, root password, and user accounts.
+
+[customizations.installer.kickstart]
+contents = ""

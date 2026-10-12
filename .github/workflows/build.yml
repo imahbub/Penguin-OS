@@ -83,10 +83,12 @@ jobs:
             --rm \
             --privileged \
             -v /var/lib/containers/storage:/var/lib/containers/storage \
+            -v "$PWD/config.toml:/config.toml:ro" \
             -v "$PWD/output:/output" \
             quay.io/centos-bootc/bootc-image-builder:latest \
-            --type iso \
+            --type anaconda-iso \
             --rootfs btrfs \
+            --config /config.toml \
             ${{ needs.build-container.outputs.image_tag }}
 
       - name: Upload ISO Artifact
