@@ -18,6 +18,7 @@ sudo docker run \
     -v "${OUTPUT_DIR}":/output \
     quay.io/centos-bootc/bootc-image-builder:latest \
     --type iso \
+    --rootfs btrfs \
     "${IMAGE_NAME}"
 
 echo "==> ISO Generation finished successfully in ${OUTPUT_DIR}"

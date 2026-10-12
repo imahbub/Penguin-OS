@@ -82,7 +82,7 @@ jobs:
             -v "$PWD/output:/output" \
             quay.io/centos-bootc/bootc-image-builder:latest \
             --type iso \
-            --local \
+            --rootfs btrfs \
             ${{ needs.build-container.outputs.image_tag }}
 
       - name: Upload ISO Artifact
