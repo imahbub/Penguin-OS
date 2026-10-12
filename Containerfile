@@ -1,5 +1,5 @@
 # Containerfile: Base image for PenguinOS
-FROM quay.io/fedora-ostree-desktops/kinoite:latest
+FROM quay.io/fedora-ostree-desktops/kinoite:43
 
 # 1. Enable Non-Free & RPM Fusion Repositories (Codecs, Drivers)
 RUN rpm-ostree install -y \
