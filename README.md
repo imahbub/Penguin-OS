@@ -46,13 +46,3 @@
 ```bash
 ./build-iso.sh penguinos:latest ./output
 ```
-
-### 3. Push to GitHub
-```bash
-git init
-git add .
-git commit -m "Initial PenguinOS distribution manifest"
-git remote add origin https://github.com/<your-username>/<your-repo>.git
-git branch -M main
-git push -u origin main
-```
