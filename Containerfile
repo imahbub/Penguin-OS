@@ -7,10 +7,20 @@ RUN rpm-ostree install -y \
     https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
 # 2. Install Complete Codecs, Media Stack & Hardware Acceleration
-RUN rpm-ostree override remove mesa-va-drivers \
-        --install mesa-va-drivers-freeworld && \
+RUN rpm-ostree override remove \
+        mesa-va-drivers \
+        libavcodec-free \
+        libavdevice-free \
+        libavfilter-free \
+        libavformat-free \
+        libavutil-free \
+        libpostproc-free \
+        libswresample-free \
+        libswscale-free \
+        ffmpeg-free \
+        --install mesa-va-drivers-freeworld \
+        --install ffmpeg && \
     rpm-ostree install -y \
-        ffmpeg \
         gstreamer1-plugins-bad-freeworld \
         gstreamer1-plugins-ugly \
         gstreamer1-libav \
