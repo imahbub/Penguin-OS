@@ -17,8 +17,8 @@ modules:
       - gstreamer1-libav
       - intel-media-driver
       - libva-intel-driver
-      - libva-mesa-driver
-      - mesa-vdpau-drivers
+      - mesa-va-drivers-freeworld
+      - mesa-vdpau-drivers-freeworld
       - libva-utils
       - vdpauinfo
       # Gaming & GPU
