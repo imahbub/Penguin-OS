@@ -2,9 +2,11 @@
 FROM quay.io/fedora-ostree-desktops/kinoite:43
 
 # 1. Enable Non-Free & RPM Fusion Repositories (Codecs, Drivers)
-RUN rpm-ostree install -y \
-    https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+RUN for i in 1 2 3 4 5; do \
+        rpm-ostree install -y \
+            https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+            https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && break || sleep 3; \
+    done
 
 # 2. Install Complete Codecs, Media Stack & Hardware Acceleration
 RUN rpm-ostree override remove \
