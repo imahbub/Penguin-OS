@@ -7,9 +7,8 @@ RUN rpm-ostree install -y \
     https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
 # 2. Install Complete Codecs, Media Stack & Hardware Acceleration
-RUN rpm-ostree override remove mesa-va-drivers mesa-vdpau-drivers \
-        --install mesa-va-drivers-freeworld \
-        --install mesa-vdpau-drivers-freeworld && \
+RUN rpm-ostree override remove mesa-va-drivers \
+        --install mesa-va-drivers-freeworld && \
     rpm-ostree install -y \
         ffmpeg \
         gstreamer1-plugins-bad-freeworld \
