@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/libexec/kdeconnectd
+Hidden=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+Name=KDE Connect
+Comment=Connect smartphone and desktop

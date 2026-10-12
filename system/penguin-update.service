@@ -1,0 +1,11 @@
+[Unit]
+Description=PenguinOS Silent Background Update
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bootc upgrade
+ExecStartPost=-/usr/bin/flatpak update -y --noninteractive
+Nice=19
+IOSchedulingClass=idle

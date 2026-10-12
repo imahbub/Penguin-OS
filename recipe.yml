@@ -1,0 +1,61 @@
+# recipe.yml: BlueBuild recipe for declarative OSTree/bootc builds
+name: penguinos
+description: Resilient, immutable KDE Plasma distribution with gaming and multimedia pre-configured.
+base-image: quay.io/fedora-ostree-desktops/kinoite
+image-version: latest
+
+modules:
+  - type: rpm-ostree
+    repos:
+      - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-%OS_VERSION%.noarch.rpm
+      - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-%OS_VERSION%.noarch.rpm
+    install:
+      # Multimedia & Codecs
+      - ffmpeg
+      - gstreamer1-plugins-bad-freeworld
+      - gstreamer1-plugins-ugly
+      - gstreamer1-libav
+      - intel-media-driver
+      - libva-intel-driver
+      - libva-mesa-driver
+      - mesa-vdpau-drivers
+      - libva-utils
+      - vdpauinfo
+      # Gaming & GPU
+      - mesa-vulkan-drivers
+      - vulkan-tools
+      - mangohud
+      - gamescope
+      - distrobox
+      - podman
+      - pipewire-utils
+      # System & KDE Connect
+      - kde-connect
+      - avahi
+      - firewalld
+
+  - type: flatpak
+    remotes:
+      flathub: https://dl.flathub.org/repo/flathub.flatpakrepo
+    install:
+      - com.valvesoftware.Steam
+      - org.mozilla.firefox
+
+  - type: systemd
+    system:
+      enabled:
+        - penguin-update.timer
+        - avahi-daemon.service
+
+  - type: files
+    files:
+      - source: system/penguin-update.service
+        destination: /etc/systemd/system/penguin-update.service
+      - source: system/penguin-update.timer
+        destination: /etc/systemd/system/penguin-update.timer
+      - source: environment/environment
+        destination: /etc/environment
+      - source: skel
+        destination: /etc/skel
+      - source: scripts/penguin-welcome
+        destination: /usr/local/bin/penguin-welcome

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/local/bin/penguin-welcome
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=PenguinOS Welcome
+Comment=PenguinOS First-boot Onboarding

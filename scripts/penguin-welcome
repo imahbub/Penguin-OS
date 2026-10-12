@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# PenguinOS First-Boot Welcome & Setup Wizard
+set -euo pipefail
+
+WELCOME_FLAG="${XDG_CONFIG_HOME:-$HOME/.config}/penguin-welcome-done"
+
+if [ -f "$WELCOME_FLAG" ]; then
+    exit 0
+fi
+
+# Function to check graphical environment
+if command -v kdialog >/dev/null 2>&1; then
+    kdialog --msgbox "Welcome to PenguinOS!\n\nYour resilient, immutable KDE Plasma workstation is ready.\n\nKey features pre-configured:\n- Hardware-accelerated media & gaming stack\n- Background atomic OS updates\n- KDE Connect seamless device integration" --title "Welcome to PenguinOS"
+    
+    # Prompt for KDE Connect pairing
+    if kdialog --yesno "Would you like to open KDE Connect now to discover and pair your phone/devices?" --title "Device Continuity"; then
+        kdeconnect-app &
+    fi
+
+    # Mark welcome completed
+    touch "$WELCOME_FLAG"
+fi
