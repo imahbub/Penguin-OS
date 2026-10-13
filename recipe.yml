@@ -34,9 +34,8 @@ modules:
       - firewalld
       - xorg-x11-drv-wacom
       - libwacom
-      - kcm-wacomtablet
+      - kcm_wacomtablet
       - fcitx5
-      - fcitx5-autostart
       - fcitx5-configtool
       - kcm-fcitx5
       - waydroid

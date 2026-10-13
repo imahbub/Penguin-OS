@@ -45,11 +45,9 @@ RUN rpm-ostree install -y \
 # 4. Install Drawing Tablet Drivers (Huion, Wacom) & Input Framework
 RUN rpm-ostree install -y \
     xorg-x11-drv-wacom \
-    wacom-tablet-finder \
     libwacom \
-    kcm-wacomtablet \
+    kcm_wacomtablet \
     fcitx5 \
-    fcitx5-autostart \
     fcitx5-configtool \
     kcm-fcitx5
 
