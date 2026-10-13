@@ -147,17 +147,8 @@ RUN for d in /usr/share/pixmaps /usr/share/icons /usr/share/plymouth/themes /usr
         done; \
     done
 
-# Configure Plymouth default boot splash to bgrt / spinner with 0s delay
-RUN mkdir -p /etc/plymouth && \
-    printf "[Daemon]\nTheme=bgrt\nShowDelay=0\nDeviceScale=1\n" > /etc/plymouth/plymouthd.conf
-
-# 14. Rebuild Initramfs with Dracut so UEFI boot splash embeds PenguinOS logo
-RUN for kdir in /usr/lib/modules/*; do \
-        [ -d "$kdir" ] || continue; \
-        kver=$(basename "$kdir"); \
-        echo "Regenerating initramfs for kernel $kver with PenguinOS Plymouth branding..."; \
-        dracut --force --reproducible --no-hostonly "/usr/lib/modules/$kver/initramfs.img" "$kver" || true; \
-    done
+# 14. Validate image compliance with bootc
+RUN bootc container lint || true
 
 # 15. Clean up packaging cache
 RUN ostree container commit
