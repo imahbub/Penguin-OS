@@ -94,18 +94,21 @@ jobs:
             --config /config.toml \
             ${{ needs.build-container.outputs.image_tag }}
 
-      - name: Prepare ISO and Generate SHA256 Checksum
+      - name: Prepare ISO, Split Chunks, and Generate SHA256 Checksums
         run: |
           sudo chown -R $USER:$USER output/
           cd output/bootiso
           sha256sum install.iso > PenguinOS-1.0-alpha.iso.sha256
-          cp install.iso PenguinOS-1.0-alpha.iso
+          # GitHub Releases strictly limits individual assets to 2 GiB (2147483648 bytes).
+          # Split into 1900MB parts so each chunk is safely under GitHub's limit.
+          split -b 1900M -d --additional-suffix=.part install.iso PenguinOS-1.0-alpha.iso.
+          sha256sum PenguinOS-1.0-alpha.iso.*.part >> PenguinOS-1.0-alpha.iso.sha256
 
       - name: Upload ISO Artifact
         uses: actions/upload-artifact@v4
         with:
           name: PenguinOS-installer-iso
-          path: output/bootiso/PenguinOS-1.0-alpha.iso
+          path: output/bootiso/install.iso
           if-no-files-found: warn
           retention-days: 7
 
@@ -117,8 +120,23 @@ jobs:
           draft: false
           prerelease: true
           make_latest: true
+          body: |
+            ## PenguinOS 1.0-alpha Bootable Installer
+            
+            Due to GitHub Release's 2 GiB per-file limit, the ISO is provided in parts.
+            
+            ### How to reassemble on Linux / macOS:
+            ```bash
+            cat PenguinOS-1.0-alpha.iso.*.part > PenguinOS-1.0-alpha.iso
+            sha256sum -c PenguinOS-1.0-alpha.iso.sha256
+            ```
+            
+            ### How to reassemble on Windows (Command Prompt):
+            ```cmd
+            copy /b PenguinOS-1.0-alpha.iso.00.part + PenguinOS-1.0-alpha.iso.01.part PenguinOS-1.0-alpha.iso
+            ```
           files: |
-            output/bootiso/PenguinOS-1.0-alpha.iso
+            output/bootiso/PenguinOS-1.0-alpha.iso.*.part
             output/bootiso/PenguinOS-1.0-alpha.iso.sha256
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
