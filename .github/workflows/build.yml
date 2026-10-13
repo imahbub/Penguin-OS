@@ -96,6 +96,7 @@ jobs:
 
       - name: Prepare ISO and Generate SHA256 Checksum
         run: |
+          sudo chown -R $USER:$USER output/
           cd output/bootiso
           sha256sum install.iso > PenguinOS-1.0-alpha.iso.sha256
           cp install.iso PenguinOS-1.0-alpha.iso
