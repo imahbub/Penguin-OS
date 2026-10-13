@@ -112,6 +112,15 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
+      - name: Upload Single Uncut ISO to Hugging Face
+        if: env.HF_TOKEN != ''
+        run: |
+          pip install --upgrade huggingface_hub
+          huggingface-cli upload linuxhasan/penguinos output/bootiso/install.iso PenguinOS-1.0-alpha.iso --repo-type dataset
+          huggingface-cli upload linuxhasan/penguinos output/bootiso/PenguinOS-1.0-alpha.iso.sha256 PenguinOS-1.0-alpha.iso.sha256 --repo-type dataset
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
       - name: Publish to GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
@@ -123,15 +132,21 @@ jobs:
           body: |
             ## PenguinOS 1.0-alpha Bootable Installer
             
-            Due to GitHub Release's 2 GiB per-file limit, the ISO is provided in parts.
+            ### 🚀 Direct High-Speed Download (Single Uncut ISO):
+            👉 **[Download PenguinOS-1.0-alpha.iso from Hugging Face](https://huggingface.co/datasets/linuxhasan/penguinos/resolve/main/PenguinOS-1.0-alpha.iso)**
             
-            ### How to reassemble on Linux / macOS:
+            ---
+            
+            ### Alternative: Download from GitHub Release (Split Parts):
+            Due to GitHub Release's 2 GiB per-file limit, the assets attached below are provided in parts.
+            
+            **How to reassemble on Linux / macOS:**
             ```bash
             cat PenguinOS-1.0-alpha.iso.*.part > PenguinOS-1.0-alpha.iso
             sha256sum -c PenguinOS-1.0-alpha.iso.sha256
             ```
             
-            ### How to reassemble on Windows (Command Prompt):
+            **How to reassemble on Windows (Command Prompt):**
             ```cmd
             copy /b PenguinOS-1.0-alpha.iso.00.part + PenguinOS-1.0-alpha.iso.01.part PenguinOS-1.0-alpha.iso
             ```
