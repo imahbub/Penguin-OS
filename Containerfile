@@ -78,9 +78,6 @@ RUN mkdir -p /tmp/craft-launcher && \
     curl -fsSL https://github.com/storytold/craft-launcher/releases/download/v0.3.2/artcraft-launcher-0.3.2-linux-x86_64.tar.gz | tar -xz -C /tmp/craft-launcher --strip-components=1 && \
     cp /tmp/craft-launcher/bin/artcraft-launcher /usr/bin/craft-launcher && \
     cp /tmp/craft-launcher/bin/artcraft-launcher /usr/bin/artcraft-launcher && \
-    mkdir -p /usr/local/bin && \
-    ln -sf /usr/bin/craft-launcher /usr/local/bin/craft-launcher && \
-    ln -sf /usr/bin/artcraft-launcher /usr/local/bin/artcraft-launcher && \
     chmod 755 /usr/bin/craft-launcher /usr/bin/artcraft-launcher && \
     cp -r /tmp/craft-launcher/share/icons/* /usr/share/icons/ && \
     cp -r /tmp/craft-launcher/share/icons/hicolor/scalable/apps/ai.storyteller.artcraft-launcher.svg /usr/share/icons/hicolor/scalable/apps/craft-launcher.svg || true && \
@@ -107,15 +104,10 @@ COPY ./scripts/penguin-pin-taskbar /usr/bin/penguin-pin-taskbar
 COPY ./scripts/penguin-launch-app /usr/bin/penguin-launch-app
 COPY ./scripts/penguin-install-apps /usr/bin/penguin-install-apps
 RUN chmod +x /usr/bin/penguin-welcome /usr/bin/penguin-pin-taskbar /usr/bin/penguin-launch-app /usr/bin/penguin-install-apps && \
-    mkdir -p /usr/local/bin && \
-    ln -sf /usr/bin/penguin-welcome /usr/local/bin/penguin-welcome && \
-    ln -sf /usr/bin/penguin-pin-taskbar /usr/local/bin/penguin-pin-taskbar && \
-    ln -sf /usr/bin/penguin-launch-app /usr/local/bin/penguin-launch-app && \
-    ln -sf /usr/bin/penguin-install-apps /usr/local/bin/penguin-install-apps && \
-    systemctl enable penguin-update.timer && \
-    systemctl enable penguin-firstboot-flatpaks.service && \
-    systemctl enable avahi-daemon.service && \
-    systemctl enable waydroid-container.service
+    systemctl enable penguin-update.timer || true && \
+    systemctl enable penguin-firstboot-flatpaks.service || true && \
+    systemctl enable avahi-daemon.service || true && \
+    systemctl enable waydroid-container.service || true
 
 # 12. Apply Custom Plasma Theme, Skel Overlays, SDDM & Environment
 COPY ./skel/. /etc/skel/
