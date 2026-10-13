@@ -1,8 +1,9 @@
 NAME="PenguinOS"
 VERSION="1.0-alpha"
-ID=penguinos
+ID=fedora
 ID_LIKE="fedora"
-VERSION_ID="1.0-alpha"
+VERSION_ID=43
+PENGUINOS_VERSION="1.0-alpha"
 PLATFORM_ID="platform:f43"
 PRETTY_NAME="PenguinOS 1.0-alpha (Workstation Edition)"
 ANSI_COLOR="0;34"
