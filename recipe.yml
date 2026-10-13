@@ -28,10 +28,18 @@ modules:
       - distrobox
       - podman
       - pipewire-utils
-      # System & KDE Connect
+      # System, Input & Tablets
       - kde-connect
       - avahi
       - firewalld
+      - xorg-x11-drv-wacom
+      - libwacom
+      - kcm-wacomtablet
+      - fcitx5
+      - fcitx5-autostart
+      - fcitx5-configtool
+      - kcm-fcitx5
+      - waydroid
 
   - type: flatpak
     remotes:
@@ -39,12 +47,16 @@ modules:
     install:
       - com.valvesoftware.Steam
       - org.mozilla.firefox
+      - org.telegram.desktop
+      - io.github.Figma_Linux.figma_linux
+      - com.stremio.Stremio
 
   - type: systemd
     system:
       enabled:
         - penguin-update.timer
         - avahi-daemon.service
+        - waydroid-container.service
 
   - type: files
     files:

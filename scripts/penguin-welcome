@@ -25,6 +25,18 @@ if command -v kdialog >/dev/null 2>&1; then
         kdeconnect-app &
     fi
 
+    # Install default Flatpak applications in the background if not present
+    if command -v flatpak >/dev/null 2>&1; then
+        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
+        (
+            flatpak install -y flathub \
+                com.valvesoftware.Steam \
+                org.telegram.desktop \
+                io.github.Figma_Linux.figma_linux \
+                com.stremio.Stremio || true
+        ) &
+    fi
+
     # Mark welcome completed
     touch "$WELCOME_FLAG"
 fi

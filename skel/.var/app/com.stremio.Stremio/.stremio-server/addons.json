@@ -1,0 +1,18 @@
+[
+  {
+    "transportUrl": "https://torrentio.strem.fun/manifest.json",
+    "manifest": {
+      "id": "com.stremio.torrentio",
+      "version": "1.0.0",
+      "name": "Torrentio",
+      "description": "Torrent provider for movies and series.",
+      "resources": ["catalog", "stream"],
+      "types": ["movie", "series"],
+      "catalogs": []
+    },
+    "flags": {
+      "official": false,
+      "protected": false
+    }
+  }
+]

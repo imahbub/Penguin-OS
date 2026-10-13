@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/fcitx5 -d
+Hidden=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+Name=Fcitx5
+Comment=Input Method

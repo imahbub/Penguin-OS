@@ -42,25 +42,57 @@ RUN rpm-ostree install -y \
     podman \
     pipewire-utils
 
-# 4. Install KDE Connect & Networking Essentials
+# 4. Install Drawing Tablet Drivers (Huion, Wacom) & Input Framework
+RUN rpm-ostree install -y \
+    xorg-x11-drv-wacom \
+    wacom-tablet-finder \
+    libwacom \
+    kcm-wacomtablet \
+    fcitx5 \
+    fcitx5-autostart \
+    fcitx5-configtool \
+    kcm-fcitx5
+
+# 5. Install OpenBangla Keyboard (Copr repository)
+RUN curl -fsSL -o /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:badshah:openbangla-keyboard.repo \
+        https://copr.fedorainfracloud.org/coprs/badshah/openbangla-keyboard/repo/fedora-43/badshah-openbangla-keyboard-fedora-43.repo && \
+    rpm-ostree install -y fcitx-openbangla
+
+# 6. Install Android App Subsystem (Waydroid)
+RUN rpm-ostree install -y waydroid
+
+# 7. Install KDE Connect & Networking Essentials
 RUN rpm-ostree install -y \
     kde-connect \
     avahi \
     firewalld
 
-# 5. Configure Firewall for KDE Connect
+# 8. Configure Firewall Policies (KDE Connect & Waydroid)
 RUN if command -v firewall-offline-cmd >/dev/null 2>&1; then \
         firewall-offline-cmd --zone=FedoraWorkstation --add-service=kde-connect || true; \
         firewall-offline-cmd --zone=trusted --add-service=kde-connect || true; \
+        firewall-offline-cmd --zone=trusted --add-interface=waydroid0 || true; \
     fi
 
-# 6. Setup Automated Background Update Service & Utilities
+# 9. Build and Install storytold/craft-launcher
+RUN dnf install -y git cargo rust libxkbcommon-devel wayland-devel libX11-devel libXrandr-devel libXi-devel mesa-libGL-devel && \
+    git clone --depth 1 https://github.com/storytold/craft-launcher.git /tmp/craft-launcher && \
+    cd /tmp/craft-launcher && \
+    cargo build --release && \
+    cp target/release/artcraft-launcher /usr/local/bin/craft-launcher || cp target/release/craft-launcher /usr/local/bin/craft-launcher || true && \
+    chmod +x /usr/local/bin/craft-launcher || true && \
+    rm -rf /tmp/craft-launcher && \
+    dnf remove -y cargo rust libxkbcommon-devel wayland-devel libX11-devel libXrandr-devel libXi-devel mesa-libGL-devel && \
+    dnf clean all
+
+# 10. Setup Automated Background Update Service & Utilities
 COPY ./system/penguin-update.service /etc/systemd/system/penguin-update.service
 COPY ./system/penguin-update.timer /etc/systemd/system/penguin-update.timer
 COPY ./scripts/penguin-welcome /usr/local/bin/penguin-welcome
 RUN chmod +x /usr/local/bin/penguin-welcome && \
     systemctl enable penguin-update.timer && \
-    systemctl enable avahi-daemon.service
+    systemctl enable avahi-daemon.service && \
+    systemctl enable waydroid-container.service
 
 # 7. Apply Custom Plasma Theme, Skel Overlays & Environment
 COPY ./skel/. /etc/skel/
