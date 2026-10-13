@@ -25,7 +25,7 @@ if command -v kdialog >/dev/null 2>&1; then
     fi
 
     # Pin Craft Launcher to panel
-    /usr/local/bin/penguin-pin-taskbar >/dev/null 2>&1 || true
+    /usr/bin/penguin-pin-taskbar >/dev/null 2>&1 || true
 
     kdialog --msgbox "Welcome to PenguinOS 1.0-alpha!\n\nYour resilient, immutable KDE Plasma workstation is ready.\n\nKey features pre-configured:\n- Hardware-accelerated media & gaming stack\n- Background atomic OS updates\n- KDE Connect seamless device integration" --title "Welcome to PenguinOS 1.0-alpha" --icon "penguinos-logo"
     

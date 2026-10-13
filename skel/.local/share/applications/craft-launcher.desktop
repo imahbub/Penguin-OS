@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Craft Launcher
 Comment=ArtCraft Suite Application Manager
-Exec=/usr/local/bin/craft-launcher
+Exec=/usr/bin/craft-launcher
 Icon=craft-launcher
 Terminal=false
 Type=Application

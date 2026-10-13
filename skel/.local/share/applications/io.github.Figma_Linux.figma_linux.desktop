@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Figma
 Comment=Collaborative interface design tool
-Exec=/usr/local/bin/penguin-launch-app io.github.Figma_Linux.figma_linux
+Exec=/usr/bin/penguin-launch-app io.github.Figma_Linux.figma_linux
 Icon=io.github.Figma_Linux.figma_linux
 Terminal=false
 Type=Application

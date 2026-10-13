@@ -6,7 +6,7 @@ ConditionPathExists=!/var/lib/penguin-firstboot-flatpaks.done
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/penguin-install-apps
+ExecStart=/usr/bin/penguin-install-apps
 RemainAfterExit=yes
 
 [Install]

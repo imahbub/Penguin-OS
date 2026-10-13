@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Stremio
 Comment=Freedom to Stream
-Exec=/usr/local/bin/penguin-launch-app com.stremio.Stremio
+Exec=/usr/bin/penguin-launch-app com.stremio.Stremio
 Icon=com.stremio.Stremio
 Terminal=false
 Type=Application

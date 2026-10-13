@@ -76,33 +76,42 @@ RUN if command -v firewall-offline-cmd >/dev/null 2>&1; then \
 # 9. Install storytold/craft-launcher (Official linux-x86_64 release with complete assets)
 RUN mkdir -p /tmp/craft-launcher && \
     curl -fsSL https://github.com/storytold/craft-launcher/releases/download/v0.3.2/artcraft-launcher-0.3.2-linux-x86_64.tar.gz | tar -xz -C /tmp/craft-launcher --strip-components=1 && \
-    cp /tmp/craft-launcher/bin/artcraft-launcher /usr/local/bin/craft-launcher && \
     cp /tmp/craft-launcher/bin/artcraft-launcher /usr/bin/craft-launcher && \
     cp /tmp/craft-launcher/bin/artcraft-launcher /usr/bin/artcraft-launcher && \
-    chmod 755 /usr/local/bin/craft-launcher /usr/bin/craft-launcher /usr/bin/artcraft-launcher && \
+    mkdir -p /usr/local/bin && \
+    ln -sf /usr/bin/craft-launcher /usr/local/bin/craft-launcher && \
+    ln -sf /usr/bin/artcraft-launcher /usr/local/bin/artcraft-launcher && \
+    chmod 755 /usr/bin/craft-launcher /usr/bin/artcraft-launcher && \
     cp -r /tmp/craft-launcher/share/icons/* /usr/share/icons/ && \
     cp -r /tmp/craft-launcher/share/icons/hicolor/scalable/apps/ai.storyteller.artcraft-launcher.svg /usr/share/icons/hicolor/scalable/apps/craft-launcher.svg || true && \
     cp -r /tmp/craft-launcher/share/icons/hicolor/512x512/apps/ai.storyteller.artcraft-launcher.png /usr/share/pixmaps/craft-launcher.png || true && \
     cp /tmp/craft-launcher/share/applications/ai.storyteller.artcraft-launcher.desktop /usr/share/applications/craft-launcher.desktop && \
-    sed -i 's|Exec=.*|Exec=/usr/local/bin/craft-launcher|g' /usr/share/applications/craft-launcher.desktop && \
+    sed -i 's|Exec=.*|Exec=/usr/bin/craft-launcher|g' /usr/share/applications/craft-launcher.desktop && \
     sed -i 's|Icon=.*|Icon=craft-launcher|g' /usr/share/applications/craft-launcher.desktop && \
     rm -rf /tmp/craft-launcher
 
-# 10. Configure Default Panel Launchers in Plasma layout template
+# 10. Configure Default Panel Launchers & Kickoff Start Button in Plasma layout template
 RUN if [ -f /usr/share/plasma/layout-templates/org.kde.plasma.desktop.defaultPanel/contents/layout.js ]; then \
         sed -i 's|preferred://browser|preferred://browser,applications:craft-launcher.desktop|g' \
             /usr/share/plasma/layout-templates/org.kde.plasma.desktop.defaultPanel/contents/layout.js || true; \
+        sed -i 's|panel\.addWidget("org\.kde\.plasma\.kickoff")|var ko = panel\.addWidget("org\.kde\.plasma\.kickoff"); ko\.currentConfigGroup = ["General"]; ko\.writeConfig("icon", "penguinos-logo");|g' \
+            /usr/share/plasma/layout-templates/org.kde.plasma.desktop.defaultPanel/contents/layout.js || true; \
     fi
 
-# 11. Setup Services, Utilities & Scripts
+# 11. Setup Services, Utilities & Scripts (in /usr/bin for immutable OSTree)
 COPY ./system/penguin-update.service /etc/systemd/system/penguin-update.service
 COPY ./system/penguin-update.timer /etc/systemd/system/penguin-update.timer
 COPY ./system/penguin-firstboot-flatpaks.service /etc/systemd/system/penguin-firstboot-flatpaks.service
-COPY ./scripts/penguin-welcome /usr/local/bin/penguin-welcome
-COPY ./scripts/penguin-pin-taskbar /usr/local/bin/penguin-pin-taskbar
-COPY ./scripts/penguin-launch-app /usr/local/bin/penguin-launch-app
-COPY ./scripts/penguin-install-apps /usr/local/bin/penguin-install-apps
-RUN chmod +x /usr/local/bin/penguin-welcome /usr/local/bin/penguin-pin-taskbar /usr/local/bin/penguin-launch-app /usr/local/bin/penguin-install-apps && \
+COPY ./scripts/penguin-welcome /usr/bin/penguin-welcome
+COPY ./scripts/penguin-pin-taskbar /usr/bin/penguin-pin-taskbar
+COPY ./scripts/penguin-launch-app /usr/bin/penguin-launch-app
+COPY ./scripts/penguin-install-apps /usr/bin/penguin-install-apps
+RUN chmod +x /usr/bin/penguin-welcome /usr/bin/penguin-pin-taskbar /usr/bin/penguin-launch-app /usr/bin/penguin-install-apps && \
+    mkdir -p /usr/local/bin && \
+    ln -sf /usr/bin/penguin-welcome /usr/local/bin/penguin-welcome && \
+    ln -sf /usr/bin/penguin-pin-taskbar /usr/local/bin/penguin-pin-taskbar && \
+    ln -sf /usr/bin/penguin-launch-app /usr/local/bin/penguin-launch-app && \
+    ln -sf /usr/bin/penguin-install-apps /usr/local/bin/penguin-install-apps && \
     systemctl enable penguin-update.timer && \
     systemctl enable penguin-firstboot-flatpaks.service && \
     systemctl enable avahi-daemon.service && \
@@ -127,10 +136,18 @@ COPY ./branding/icons/*.png /usr/share/pixmaps/
 COPY ./branding/icons/*.png /usr/share/icons/hicolor/128x128/apps/
 COPY ./branding/wallpapers/ /usr/share/wallpapers/
 
+# Brand Start Menu Icons & Fedora Distro Icons to PenguinOS logo
+RUN for icon_name in start-here start-here-kde distributor-logo distributor-logo-fedora fedora-logo fedora-logo-icon; do \
+        cp -f /usr/share/pixmaps/penguinos-logo.svg /usr/share/icons/hicolor/scalable/apps/${icon_name}.svg 2>/dev/null || true; \
+        cp -f /usr/share/pixmaps/penguinos-logo.png /usr/share/icons/hicolor/512x512/apps/${icon_name}.png 2>/dev/null || true; \
+        cp -f /usr/share/pixmaps/penguinos-logo.svg /usr/share/pixmaps/${icon_name}.svg 2>/dev/null || true; \
+        cp -f /usr/share/pixmaps/penguinos-logo.png /usr/share/pixmaps/${icon_name}.png 2>/dev/null || true; \
+    done
+
 # Replace Fedora branding in pixmaps, icons, plymouth boot splash, and anaconda
-RUN for d in /usr/share/pixmaps /usr/share/icons /usr/share/plymouth/themes /usr/share/plymouth/themes/spinner /usr/share/plymouth/themes/bgrt /usr/share/anaconda/pixmaps; do \
+RUN for d in /usr/share/pixmaps /usr/share/icons /usr/share/plymouth/themes /usr/share/plymouth/themes/spinner /usr/share/plymouth/themes/bgrt /usr/share/plymouth/themes/breeze /usr/share/anaconda/pixmaps; do \
         [ -d "$d" ] || continue; \
-        find "$d" -type f \( -name "*fedora*" -o -name "watermark.png" -o -name "bgrt-fallback.png" \) | while read -r f; do \
+        find "$d" -type f \( -name "*fedora*" -o -name "*breeze*logo*" -o -name "watermark.png" -o -name "bgrt-fallback.png" \) | while read -r f; do \
             case "$f" in \
                 *.svg) cp -f /usr/share/pixmaps/penguinos-logo.svg "$f" 2>/dev/null || true ;; \
                 *.png) cp -f /usr/share/pixmaps/penguinos-logo.png "$f" 2>/dev/null || true ;; \
@@ -138,5 +155,17 @@ RUN for d in /usr/share/pixmaps /usr/share/icons /usr/share/plymouth/themes /usr
         done; \
     done
 
-# 14. Clean up packaging cache
+# Configure Plymouth default boot splash to bgrt / spinner with 0s delay
+RUN mkdir -p /etc/plymouth && \
+    printf "[Daemon]\nTheme=bgrt\nShowDelay=0\nDeviceScale=1\n" > /etc/plymouth/plymouthd.conf
+
+# 14. Rebuild Initramfs with Dracut so UEFI boot splash embeds PenguinOS logo
+RUN for kdir in /usr/lib/modules/*; do \
+        [ -d "$kdir" ] || continue; \
+        kver=$(basename "$kdir"); \
+        echo "Regenerating initramfs for kernel $kver with PenguinOS Plymouth branding..."; \
+        dracut --force --reproducible --no-hostonly "/usr/lib/modules/$kver/initramfs.img" "$kver" || true; \
+    done
+
+# 15. Clean up packaging cache
 RUN ostree container commit
