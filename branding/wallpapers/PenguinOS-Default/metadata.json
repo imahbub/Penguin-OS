@@ -1,0 +1,12 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "PenguinOS Team"
+            }
+        ],
+        "Id": "PenguinOS-Default",
+        "License": "CC-BY-SA-4.0",
+        "Name": "PenguinOS Default"
+    }
+}

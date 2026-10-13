@@ -62,9 +62,16 @@ RUN chmod +x /usr/local/bin/penguin-welcome && \
     systemctl enable penguin-update.timer && \
     systemctl enable avahi-daemon.service
 
-# 7. Apply Custom Plasma Theme & Skel Overlays & Environment
+# 7. Apply Custom Plasma Theme, Skel Overlays & Environment
 COPY ./skel/. /etc/skel/
 COPY ./environment/environment /etc/environment
 
-# 8. Clean up packaging cache
+# 8. Apply PenguinOS Brand Identity (os-release, logo, wallpapers)
+COPY ./branding/os-release /usr/lib/os-release
+COPY ./branding/os-release /etc/os-release
+COPY ./branding/icons/penguinos-logo.svg /usr/share/pixmaps/penguinos-logo.svg
+COPY ./branding/icons/penguinos-logo.svg /usr/share/icons/hicolor/scalable/apps/penguinos-logo.svg
+COPY ./branding/wallpapers/ /usr/share/wallpapers/
+
+# 9. Clean up packaging cache
 RUN ostree container commit

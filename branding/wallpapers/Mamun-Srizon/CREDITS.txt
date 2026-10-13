@@ -1,0 +1,4 @@
+Wallpaper: Mamun Srizon
+Artist: Mamun Srizon
+License: CC-BY-SA-4.0
+Description: Contributed wallpaper for PenguinOS by Mamun Srizon.

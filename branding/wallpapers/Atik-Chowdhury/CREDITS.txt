@@ -1,0 +1,4 @@
+Wallpaper: Atik Chowdhury
+Artist: Atik Chowdhury
+License: CC-BY-SA-4.0
+Description: Contributed wallpaper for PenguinOS by Atik Chowdhury.

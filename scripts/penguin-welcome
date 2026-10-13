@@ -10,7 +10,15 @@ fi
 
 # Function to check graphical environment
 if command -v kdialog >/dev/null 2>&1; then
-    kdialog --msgbox "Welcome to PenguinOS!\n\nYour resilient, immutable KDE Plasma workstation is ready.\n\nKey features pre-configured:\n- Hardware-accelerated media & gaming stack\n- Background atomic OS updates\n- KDE Connect seamless device integration" --title "Welcome to PenguinOS"
+    # Apply official default wallpaper on first boot
+    if command -v plasma-apply-wallpaperimage >/dev/null 2>&1; then
+        DEFAULT_WP="/usr/share/wallpapers/PenguinOS-Default/contents/images/1920x1080.jpg"
+        if [ -f "$DEFAULT_WP" ]; then
+            plasma-apply-wallpaperimage "$DEFAULT_WP" >/dev/null 2>&1 || true
+        fi
+    fi
+
+    kdialog --msgbox "Welcome to PenguinOS 1.0-alpha!\n\nYour resilient, immutable KDE Plasma workstation is ready.\n\nKey features pre-configured:\n- Hardware-accelerated media & gaming stack\n- Background atomic OS updates\n- KDE Connect seamless device integration" --title "Welcome to PenguinOS 1.0-alpha" --icon "penguinos-logo"
     
     # Prompt for KDE Connect pairing
     if kdialog --yesno "Would you like to open KDE Connect now to discover and pair your phone/devices?" --title "Device Continuity"; then

@@ -1,6 +1,6 @@
-# PenguinOS
+# PenguinOS 1.0-alpha
 
-**PenguinOS** is a resilient, consumer-ready, immutable Linux distribution built on a container-native base (`bootc` / OSTree / Fedora Kinoite) designed for productivity workstations and high-performance gaming.
+**PenguinOS 1.0-alpha** is a resilient, consumer-ready, immutable Linux distribution built on a container-native base (`bootc` / OSTree / Fedora Kinoite) designed for productivity workstations and high-performance gaming.
 
 ## Core Features
 

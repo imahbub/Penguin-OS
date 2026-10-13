@@ -1,0 +1,4 @@
+Wallpaper: PenguinOS Default
+Artist: PenguinOS Team
+License: CC-BY-SA-4.0
+Description: Official default wallpaper for PenguinOS.

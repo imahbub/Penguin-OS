@@ -1,0 +1,4 @@
+Wallpaper: Sharafat Siddiqui
+Artist: Sharafat Siddiqui
+License: CC-BY-SA-4.0
+Description: Contributed wallpaper for PenguinOS by Sharafat Siddiqui.
