@@ -113,26 +113,22 @@ jobs:
           retention-days: 7
 
       - name: Upload Single Uncut ISO to Hugging Face Bucket
-        if: env.HF_TOKEN != ''
+        if: ${{ secrets.HF_TOKEN != '' }}
         run: |
-          pip install --upgrade huggingface_hub
+          pip install --upgrade "huggingface_hub[hf_xet]"
+          mkdir -p hf_upload
+          cp output/bootiso/install.iso hf_upload/PenguinOS-1.0-alpha.iso
+          cp output/bootiso/PenguinOS-1.0-alpha.iso.sha256 hf_upload/PenguinOS-1.0-alpha.iso.sha256
           python3 -c "
           import os
           try:
-              from huggingface_hub import batch_bucket_files
-              print('Uploading to Hugging Face Bucket linuxhasan/penguinos...')
-              batch_bucket_files(
-                  'linuxhasan/penguinos',
-                  add=[
-                      ('output/bootiso/install.iso', 'PenguinOS-1.0-alpha.iso'),
-                      ('output/bootiso/PenguinOS-1.0-alpha.iso.sha256', 'PenguinOS-1.0-alpha.iso.sha256'),
-                  ],
-              )
+              from huggingface_hub import sync_bucket
+              print('Uploading to Hugging Face Bucket linuxhasan/penguinos via sync_bucket...')
+              sync_bucket(source='hf_upload', destination='hf://buckets/linuxhasan/penguinos')
               print('Upload to Hugging Face Bucket complete!')
           except Exception as e:
-              print(f'Bucket upload failed: {e}. Falling back to CLI...')
-              os.system('hf buckets cp output/bootiso/install.iso hf://buckets/linuxhasan/penguinos/PenguinOS-1.0-alpha.iso')
-              os.system('hf buckets cp output/bootiso/PenguinOS-1.0-alpha.iso.sha256 hf://buckets/linuxhasan/penguinos/PenguinOS-1.0-alpha.iso.sha256')
+              print(f'sync_bucket failed: {e}. Trying hf CLI...')
+              os.system('hf buckets sync hf_upload hf://buckets/linuxhasan/penguinos || hf cp output/bootiso/install.iso hf://buckets/linuxhasan/penguinos/PenguinOS-1.0-alpha.iso')
           "
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}

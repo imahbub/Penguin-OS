@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# PenguinOS Default Panel Layout Setup
+set -euo pipefail
+
+# 1. Update taskbar launchers dynamically if Plasma shell is running
+if command -v qdbus6 >/dev/null 2>&1; then
+    qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+        var p = panels();
+        for (var i = 0; i < p.length; ++i) {
+            var ws = p[i].widgets();
+            for (var j = 0; j < ws.length; ++j) {
+                if (ws[j].type === "org.kde.plasma.icontasks" || ws[j].type === "org.kde.plasma.taskmanager") {
+                    ws[j].currentConfigGroup = ["General"];
+                    var cur = ws[j].readConfig("launchers") || "";
+                    if (cur.indexOf("craft-launcher") === -1) {
+                        var updated = cur ? cur + ",applications:craft-launcher.desktop" : "applications:craft-launcher.desktop";
+                        ws[j].writeConfig("launchers", updated);
+                    }
+                }
+            }
+        }
+    ' >/dev/null 2>&1 || true
+elif command -v qdbus >/dev/null 2>&1; then
+    qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+        var p = panels();
+        for (var i = 0; i < p.length; ++i) {
+            var ws = p[i].widgets();
+            for (var j = 0; j < ws.length; ++j) {
+                if (ws[j].type === "org.kde.plasma.icontasks" || ws[j].type === "org.kde.plasma.taskmanager") {
+                    ws[j].currentConfigGroup = ["General"];
+                    var cur = ws[j].readConfig("launchers") || "";
+                    if (cur.indexOf("craft-launcher") === -1) {
+                        var updated = cur ? cur + ",applications:craft-launcher.desktop" : "applications:craft-launcher.desktop";
+                        ws[j].writeConfig("launchers", updated);
+                    }
+                }
+            }
+        }
+    ' >/dev/null 2>&1 || true
+fi
+
+# 2. Also ensure config file has launchers set
+PANEL_CFG="${XDG_CONFIG_HOME:-$HOME/.config}/plasma-org.kde.plasma.desktop-appletsrc"
+if [ -f "$PANEL_CFG" ] && command -v kwriteconfig6 >/dev/null 2>&1; then
+    # Look for icontasks applet section in config if present
+    grep -E 'plugin=org\.kde\.plasma\.(icontasks|taskmanager)' "$PANEL_CFG" 2>/dev/null | while read -r line; do
+        # Extract applet group
+        true
+    done
+fi

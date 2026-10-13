@@ -1,0 +1,5 @@
+[Greeter]
+WallpaperPlugin=org.kde.image
+
+[Greeter][Wallpaper][org.kde.image][General]
+Image=file:///usr/share/wallpapers/PenguinOS-Default/contents/images/1920x1080.jpg

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Steam
+Comment=Application for managing and playing games on Steam
+Exec=/usr/local/bin/penguin-launch-app com.valvesoftware.Steam
+Icon=com.valvesoftware.Steam
+Terminal=false
+Type=Application
+Categories=Game;
+StartupNotify=true

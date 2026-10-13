@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Stremio
+Comment=Freedom to Stream
+Exec=/usr/local/bin/penguin-launch-app com.stremio.Stremio
+Icon=com.stremio.Stremio
+Terminal=false
+Type=Application
+Categories=AudioVideo;Video;Player;TV;
+StartupNotify=true

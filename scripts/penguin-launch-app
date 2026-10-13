@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# penguin-launch-app: Unified application launcher for PenguinOS Flatpaks
+set -euo pipefail
+
+APP_ID="$1"
+shift || true
+
+if command -v flatpak >/dev/null 2>&1; then
+    if flatpak info "$APP_ID" >/dev/null 2>&1; then
+        exec flatpak run "$APP_ID" "$@"
+    fi
+    
+    # Try user scope if installed per-user
+    if flatpak info --user "$APP_ID" >/dev/null 2>&1; then
+        exec flatpak run --user "$APP_ID" "$@"
+    fi
+
+    # Show prompt/notification while finishing install
+    if command -v kdialog >/dev/null 2>&1; then
+        kdialog --passivepopup "PenguinOS is finalizing the installation of ${APP_ID} in the background. It will launch as soon as ready..." 8 &
+    fi
+
+    # Ensure remote exists and install to user scope
+    flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
+    flatpak --user install -y flathub "$APP_ID" || true
+
+    if flatpak info --user "$APP_ID" >/dev/null 2>&1; then
+        exec flatpak run --user "$APP_ID" "$@"
+    fi
+fi
+
+# Fallback error
+if command -v kdialog >/dev/null 2>&1; then
+    kdialog --error "Could not launch ${APP_ID}. Please verify your internet connection." --title "PenguinOS"
+else
+    echo "Error: Could not launch ${APP_ID}" >&2
+fi
+exit 1

@@ -18,23 +18,30 @@ if command -v kdialog >/dev/null 2>&1; then
         fi
     fi
 
+    # Apply lockscreen wallpaper
+    if command -v kwriteconfig6 >/dev/null 2>&1; then
+        DEFAULT_WP="/usr/share/wallpapers/PenguinOS-Default/contents/images/1920x1080.jpg"
+        kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file://$DEFAULT_WP" || true
+    fi
+
+    # Pin Craft Launcher to panel
+    /usr/local/bin/penguin-pin-taskbar >/dev/null 2>&1 || true
+
     kdialog --msgbox "Welcome to PenguinOS 1.0-alpha!\n\nYour resilient, immutable KDE Plasma workstation is ready.\n\nKey features pre-configured:\n- Hardware-accelerated media & gaming stack\n- Background atomic OS updates\n- KDE Connect seamless device integration" --title "Welcome to PenguinOS 1.0-alpha" --icon "penguinos-logo"
     
     # Prompt for KDE Connect pairing
-    if kdialog --yesno "Would you like to open KDE Connect now to discover and pair your phone/devices?" --title "Device Continuity"; then
+    if kdialog --yesno "Would you like to open KDE Connect now to discover and pair your phone/devices?" --title "Device Continuity" 2>/dev/null; then
         kdeconnect-app &
     fi
 
-    # Install default Flatpak applications in the background if not present
+    # Trigger user-scope applications installer if not present
     if command -v flatpak >/dev/null 2>&1; then
-        flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
-        (
-            flatpak install -y flathub \
-                com.valvesoftware.Steam \
-                org.telegram.desktop \
-                io.github.Figma_Linux.figma_linux \
-                com.stremio.Stremio || true
-        ) &
+        flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
+        nohup flatpak --user install -y flathub \
+            com.valvesoftware.Steam \
+            org.telegram.desktop \
+            io.github.Figma_Linux.figma_linux \
+            com.stremio.Stremio >/tmp/penguin-apps-install.log 2>&1 &
     fi
 
     # Mark welcome completed

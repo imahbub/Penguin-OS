@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# penguin-install-apps: System-level background installer for core PenguinOS applications
+set -euo pipefail
+
+if [ -f /var/lib/penguin-firstboot-flatpaks.done ]; then
+    exit 0
+fi
+
+if command -v flatpak >/dev/null 2>&1; then
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
+    flatpak install -y --noninteractive flathub \
+        com.valvesoftware.Steam \
+        org.telegram.desktop \
+        io.github.Figma_Linux.figma_linux \
+        com.stremio.Stremio || true
+fi
+
+mkdir -p /var/lib
+touch /var/lib/penguin-firstboot-flatpaks.done

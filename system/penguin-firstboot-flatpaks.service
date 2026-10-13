@@ -1,0 +1,13 @@
+[Unit]
+Description=PenguinOS First-Boot Applications Provisioning
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=!/var/lib/penguin-firstboot-flatpaks.done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/penguin-install-apps
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
