@@ -116,8 +116,26 @@ jobs:
         if: env.HF_TOKEN != ''
         run: |
           pip install --upgrade huggingface_hub
-          huggingface-cli upload linuxhasan/penguinos output/bootiso/install.iso PenguinOS-1.0-alpha.iso --repo-type dataset
-          huggingface-cli upload linuxhasan/penguinos output/bootiso/PenguinOS-1.0-alpha.iso.sha256 PenguinOS-1.0-alpha.iso.sha256 --repo-type dataset
+          python3 -c "
+          import os
+          from huggingface_hub import HfApi
+          api = HfApi()
+          print('Uploading PenguinOS-1.0-alpha.iso to Hugging Face...')
+          api.upload_file(
+              path_or_fileobj='output/bootiso/install.iso',
+              path_in_repo='PenguinOS-1.0-alpha.iso',
+              repo_id='linuxhasan/penguinos',
+              repo_type='dataset'
+          )
+          print('Uploading checksum...')
+          api.upload_file(
+              path_or_fileobj='output/bootiso/PenguinOS-1.0-alpha.iso.sha256',
+              path_in_repo='PenguinOS-1.0-alpha.iso.sha256',
+              repo_id='linuxhasan/penguinos',
+              repo_type='dataset'
+          )
+          print('Upload to Hugging Face complete!')
+          "
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
 
