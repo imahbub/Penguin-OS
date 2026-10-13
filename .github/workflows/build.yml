@@ -58,7 +58,7 @@ jobs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: read
 
     steps:
@@ -94,10 +94,30 @@ jobs:
             --config /config.toml \
             ${{ needs.build-container.outputs.image_tag }}
 
+      - name: Prepare ISO and Generate SHA256 Checksum
+        run: |
+          cd output/bootiso
+          sha256sum install.iso > PenguinOS-1.0-alpha.iso.sha256
+          cp install.iso PenguinOS-1.0-alpha.iso
+
       - name: Upload ISO Artifact
         uses: actions/upload-artifact@v4
         with:
           name: PenguinOS-installer-iso
-          path: output/bootiso/install.iso
+          path: output/bootiso/PenguinOS-1.0-alpha.iso
           if-no-files-found: warn
           retention-days: 7
+
+      - name: Publish to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v1.0-alpha"
+          name: "PenguinOS 1.0-alpha"
+          draft: false
+          prerelease: true
+          make_latest: true
+          files: |
+            output/bootiso/PenguinOS-1.0-alpha.iso
+            output/bootiso/PenguinOS-1.0-alpha.iso.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
