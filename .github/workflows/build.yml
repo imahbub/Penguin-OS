@@ -60,6 +60,8 @@ jobs:
     permissions:
       contents: write
       packages: read
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -113,7 +115,7 @@ jobs:
           retention-days: 7
 
       - name: Upload Single Uncut ISO to Hugging Face Bucket
-        if: ${{ secrets.HF_TOKEN != '' }}
+        if: env.HF_TOKEN != ''
         run: |
           pip install --upgrade "huggingface_hub[hf_xet]"
           mkdir -p hf_upload
