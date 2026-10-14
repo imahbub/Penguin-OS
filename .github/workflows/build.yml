@@ -3,8 +3,32 @@ name: Build PenguinOS Image & ISO
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'Containerfile'
+      - 'config.toml'
+      - 'recipe.yml'
+      - 'build.sh'
+      - 'build-iso.sh'
+      - 'branding/**'
+      - 'environment/**'
+      - 'scripts/**'
+      - 'skel/**'
+      - 'system/**'
+      - '.github/workflows/build.yml'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'Containerfile'
+      - 'config.toml'
+      - 'recipe.yml'
+      - 'build.sh'
+      - 'build-iso.sh'
+      - 'branding/**'
+      - 'environment/**'
+      - 'scripts/**'
+      - 'skel/**'
+      - 'system/**'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
 
 env:
