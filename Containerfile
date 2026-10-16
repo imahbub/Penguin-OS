@@ -44,7 +44,8 @@ RUN rpm-ostree install -y \
     telegram-desktop \
     playerctl \
     brightnessctl \
-    python3-pyqt6
+    python3-pyqt6 \
+    steam-devices
 
 # 4. Install Drawing Tablet Drivers (Huion, Wacom) & Input Framework
 RUN rpm-ostree install -y \
@@ -75,6 +76,12 @@ RUN if command -v firewall-offline-cmd >/dev/null 2>&1; then \
         firewall-offline-cmd --zone=trusted --add-service=kde-connect || true; \
         firewall-offline-cmd --zone=trusted --add-interface=waydroid0 || true; \
     fi
+
+# 8b. Pre-configure Flathub repository & Steam gamepad udev rules
+RUN mkdir -p /etc/flatpak/remotes.d /usr/lib/udev/rules.d /etc/udev/rules.d && \
+    curl -fsSL https://dl.flathub.org/repo/flathub.flatpakrepo -o /etc/flatpak/remotes.d/flathub.flatpakrepo || true
+COPY ./system/udev/*.rules /usr/lib/udev/rules.d/
+COPY ./system/udev/*.rules /etc/udev/rules.d/
 
 # 9. Install storytold/craft-launcher (Official linux-x86_64 release with complete assets)
 RUN mkdir -p /tmp/craft-launcher && \

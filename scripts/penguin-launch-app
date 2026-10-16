@@ -5,27 +5,51 @@ set -euo pipefail
 APP_ID="$1"
 shift || true
 
+run_flatpak() {
+    local target="$1"
+    shift || true
+
+    if [ "$target" = "com.stremio.Stremio" ]; then
+        # Ensure valid stremio configuration with Torrentio & Cinemeta
+        local server_dir="$HOME/.var/app/com.stremio.Stremio/.stremio-server"
+        if [ ! -f "$server_dir/addons.json" ] && [ -f "/etc/skel/.var/app/com.stremio.Stremio/.stremio-server/addons.json" ]; then
+            mkdir -p "$server_dir"
+            cp -f "/etc/skel/.var/app/com.stremio.Stremio/.stremio-server/addons.json" "$server_dir/addons.json" || true
+        fi
+
+        # Pass essential flags to prevent WebKit JIT crashes and Wayland compositing bugs
+        exec flatpak run \
+            --env=JavaScriptCoreUseJIT=0 \
+            --env=QT_QPA_PLATFORM=xcb \
+            --nosocket=wayland \
+            "$target" "$@"
+    else
+        exec flatpak run "$target" "$@"
+    fi
+}
+
 if command -v flatpak >/dev/null 2>&1; then
+    # 1. Check system-wide installation
     if flatpak info "$APP_ID" >/dev/null 2>&1; then
-        exec flatpak run "$APP_ID" "$@"
+        run_flatpak "$APP_ID" "$@"
     fi
     
-    # Try user scope if installed per-user
+    # 2. Check user-level installation
     if flatpak info --user "$APP_ID" >/dev/null 2>&1; then
-        exec flatpak run --user "$APP_ID" "$@"
+        run_flatpak "$APP_ID" "$@"
     fi
 
-    # Show prompt/notification while finishing install
+    # 3. If not installed, inform user and install
     if command -v kdialog >/dev/null 2>&1; then
         kdialog --passivepopup "PenguinOS is finalizing the installation of ${APP_ID} in the background. It will launch as soon as ready..." 8 &
     fi
 
-    # Ensure remote exists and install to user scope
+    # Ensure Flathub remote exists
     flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo || true
     flatpak --user install -y flathub "$APP_ID" || true
 
-    if flatpak info --user "$APP_ID" >/dev/null 2>&1; then
-        exec flatpak run --user "$APP_ID" "$@"
+    if flatpak info --user "$APP_ID" >/dev/null 2>&1 || flatpak info "$APP_ID" >/dev/null 2>&1; then
+        run_flatpak "$APP_ID" "$@"
     fi
 fi
 

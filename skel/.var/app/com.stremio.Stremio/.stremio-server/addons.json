@@ -1,6 +1,51 @@
 [
   {
-    "transportUrl": "https://torrentio.strem.fun/manifest.json",
+    "manifest": {
+      "id": "com.linvo.cinemeta",
+      "version": "3.0.14",
+      "name": "Cinemeta",
+      "description": "The official addon for movie and series catalogs",
+      "resources": ["catalog", "meta", "addon_catalog"],
+      "types": ["movie", "series"],
+      "idPrefixes": ["tt"]
+    },
+    "transportUrl": "https://v3-cinemeta.strem.io/manifest.json",
+    "flags": {
+      "official": true,
+      "protected": true
+    }
+  },
+  {
+    "manifest": {
+      "id": "org.stremio.opensubtitlesv3",
+      "version": "1.0.0",
+      "name": "OpenSubtitles v3",
+      "description": "Official subtitles from OpenSubtitles",
+      "resources": ["subtitles"],
+      "types": ["movie", "series"]
+    },
+    "transportUrl": "https://opensubtitles-v3.strem.io/manifest.json",
+    "flags": {
+      "official": true,
+      "protected": true
+    }
+  },
+  {
+    "manifest": {
+      "id": "com.stremio.watchhub",
+      "version": "1.0.0",
+      "name": "WatchHub",
+      "description": "Streams from VOD providers",
+      "resources": ["stream"],
+      "types": ["movie", "series"]
+    },
+    "transportUrl": "https://watchhub.strem.io/manifest.json",
+    "flags": {
+      "official": true,
+      "protected": true
+    }
+  },
+  {
     "manifest": {
       "id": "com.stremio.torrentio",
       "version": "1.0.0",
@@ -10,6 +55,7 @@
       "types": ["movie", "series"],
       "catalogs": []
     },
+    "transportUrl": "https://torrentio.strem.fun/manifest.json",
     "flags": {
       "official": false,
       "protected": false
