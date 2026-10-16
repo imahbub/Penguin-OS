@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Penguin Assistant
+Comment=Voice and AI Assistant for PenguinOS
+Exec=/usr/bin/penguin-assistant trigger
+Icon=penguinos-logo
+Terminal=false
+Type=Application
+Categories=Utility;System;Audio;
+StartupNotify=false
+X-KDE-GlobalAccel-CommandShortcut=true

@@ -1,0 +1,14 @@
+[Unit]
+Description=PenguinOS Voice Assistant Desktop Overlay
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/penguin-assistant overlay
+Restart=on-failure
+RestartSec=3s
+Environment=XDG_RUNTIME_DIR=/run/user/%U
+
+[Install]
+WantedBy=graphical-session.target

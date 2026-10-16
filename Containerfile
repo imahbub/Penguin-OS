@@ -41,7 +41,10 @@ RUN rpm-ostree install -y \
     distrobox \
     podman \
     pipewire-utils \
-    telegram-desktop
+    telegram-desktop \
+    playerctl \
+    brightnessctl \
+    python3-pyqt6
 
 # 4. Install Drawing Tablet Drivers (Huion, Wacom) & Input Framework
 RUN rpm-ostree install -y \
@@ -103,11 +106,23 @@ COPY ./scripts/penguin-welcome /usr/bin/penguin-welcome
 COPY ./scripts/penguin-pin-taskbar /usr/bin/penguin-pin-taskbar
 COPY ./scripts/penguin-launch-app /usr/bin/penguin-launch-app
 COPY ./scripts/penguin-install-apps /usr/bin/penguin-install-apps
+COPY ./penguin-assistant /usr/share/penguin-assistant
 RUN chmod +x /usr/bin/penguin-welcome /usr/bin/penguin-pin-taskbar /usr/bin/penguin-launch-app /usr/bin/penguin-install-apps && \
+    chmod +x /usr/share/penguin-assistant/bin/penguin-assistant && \
+    ln -sf /usr/share/penguin-assistant/bin/penguin-assistant /usr/bin/penguin-assistant && \
+    mkdir -p /etc/penguin-assistant && \
+    cp /usr/share/penguin-assistant/config/assistant.conf /etc/penguin-assistant/assistant.conf && \
+    cp /usr/share/penguin-assistant/penguin-assistant.desktop /usr/share/applications/penguin-assistant.desktop && \
+    mkdir -p /usr/lib/systemd/user/default.target.wants /usr/lib/systemd/user/graphical-session.target.wants && \
+    cp /usr/share/penguin-assistant/systemd/penguin-assistant.service /usr/lib/systemd/user/penguin-assistant.service && \
+    cp /usr/share/penguin-assistant/systemd/penguin-assistant-overlay.service /usr/lib/systemd/user/penguin-assistant-overlay.service && \
+    ln -sf /usr/lib/systemd/user/penguin-assistant.service /usr/lib/systemd/user/default.target.wants/penguin-assistant.service && \
+    ln -sf /usr/lib/systemd/user/penguin-assistant-overlay.service /usr/lib/systemd/user/graphical-session.target.wants/penguin-assistant-overlay.service && \
     systemctl enable penguin-update.timer || true && \
     systemctl enable penguin-firstboot-flatpaks.service || true && \
     systemctl enable avahi-daemon.service || true && \
     systemctl enable waydroid-container.service || true
+
 
 # 12. Apply Custom Plasma Theme, Skel Overlays, SDDM & Environment
 COPY ./skel/. /etc/skel/

@@ -1,0 +1,19 @@
+[Unit]
+Description=PenguinOS Voice Assistant Daemon
+After=pipewire.service wireplumber.service graphical-session.target
+Wants=pipewire.service wireplumber.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/penguin-assistant daemon
+Restart=on-failure
+RestartSec=3s
+Environment=XDG_RUNTIME_DIR=/run/user/%U
+
+# Security Hardening Parameters
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%t %h/.config/penguin-assistant %h/.cache/penguin-assistant
+
+[Install]
+WantedBy=default.target

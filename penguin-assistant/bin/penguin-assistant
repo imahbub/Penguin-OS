@@ -1,0 +1,120 @@
+#!/usr/bin/env python3
+"""CLI interface and launcher for PenguinOS Voice Assistant."""
+
+import argparse
+import os
+import sys
+from pathlib import Path
+
+# Add project root to sys.path
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from daemon.ipc import send_ipc_command
+from daemon.service import main as run_daemon
+from daemon.config import Config
+
+
+def cmd_trigger(args):
+    """Trigger the assistant to start listening immediately."""
+    res = send_ipc_command({"cmd": "trigger"})
+    if res and res.get("status") == "ok":
+        print("Penguin Assistant is now listening...")
+    else:
+        print("Error: Penguin Assistant daemon is not running. Start it with 'penguin-assistant daemon'.")
+        sys.exit(1)
+
+
+def cmd_exec(args):
+    """Send an intent command string directly to the assistant."""
+    text = " ".join(args.command)
+    res = send_ipc_command({"cmd": "exec", "text": text, "speak": not args.no_speech})
+    if res and res.get("status") == "ok":
+        result = res.get("result", {})
+        print(f"Action: {result.get('action')}")
+        print(f"Response: {result.get('response')}")
+    else:
+        print("Error: Penguin Assistant daemon is not running or failed to execute.")
+        sys.exit(1)
+
+
+def cmd_speak(args):
+    """Speak text using the configured TTS engine."""
+    text = " ".join(args.text)
+    res = send_ipc_command({"cmd": "speak", "text": text})
+    if not res:
+        # Fallback to direct TTS
+        from daemon.tts import TTSEngine
+        cfg = Config()
+        tts = TTSEngine(cfg)
+        tts.speak(text)
+
+
+def cmd_status(args):
+    """Check daemon status."""
+    res = send_ipc_command({"cmd": "status"})
+    if res and res.get("status") == "ok":
+        print(f"Penguin Assistant Daemon: ACTIVE")
+        print(f"Current State: {res.get('state')}")
+        print(f"Wake Word Enabled: {res.get('wake_word_enabled')}")
+    else:
+        print("Penguin Assistant Daemon: INACTIVE (not running)")
+
+
+def cmd_daemon(args):
+    """Run the background daemon."""
+    run_daemon()
+
+
+def cmd_overlay(args):
+    """Launch the visual desktop overlay HUD."""
+    from ui.overlay import launch_overlay
+    launch_overlay()
+
+
+def main():
+    parser = argparse.ArgumentParser(description="PenguinOS Voice Assistant CLI")
+    subparsers = parser.add_subparsers(dest="action", help="Subcommand to execute")
+
+    # daemon
+    subparsers.add_parser("daemon", help="Run the assistant background daemon")
+
+    # trigger
+    subparsers.add_parser("trigger", help="Trigger assistant to start listening")
+
+    # exec
+    p_exec = subparsers.add_parser("exec", help="Execute a voice command by text")
+    p_exec.add_argument("command", nargs="+", help="Command string (e.g. 'volume 50')")
+    p_exec.add_argument("--no-speech", action="store_true", help="Do not speak the response")
+
+    # speak
+    p_speak = subparsers.add_parser("speak", help="Speak text using TTS")
+    p_speak.add_argument("text", nargs="+", help="Text to speak")
+
+    # status
+    subparsers.add_parser("status", help="Check assistant daemon status")
+
+    # overlay
+    subparsers.add_parser("overlay", help="Launch the desktop overlay HUD")
+
+    args = parser.parse_args()
+
+    if args.action == "daemon":
+        cmd_daemon(args)
+    elif args.action == "trigger":
+        cmd_trigger(args)
+    elif args.action == "exec":
+        cmd_exec(args)
+    elif args.action == "speak":
+        cmd_speak(args)
+    elif args.action == "status":
+        cmd_status(args)
+    elif args.action == "overlay":
+        cmd_overlay(args)
+    else:
+        # Default behavior: if no argument, trigger listening
+        cmd_trigger(args)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,9 @@
+# PenguinOS AI Voice Assistant Dependencies
+PyQt6>=6.5.0
+
+# Optional Voice AI Inference Packages
+# (Can be installed inside distrobox, flatpak, or host container layer)
+openwakeword>=0.6.0
+onnxruntime>=1.16.0
+faster-whisper>=1.0.0
+piper-tts>=1.2.0
